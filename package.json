@@ -36,6 +36,7 @@
   "unpkg": "dist/vcalendar.min.js",
   "types": "types/index.d.ts",
   "scripts": {
+    "prepare": "npm run build",
     "build": "vite build",
     "analyze": "vite build --config analyze.config.ts",
     "test": "yarn jest",
