@@ -584,6 +584,7 @@ export default {
         rangePriority = RANGE_PRIORITY.BOTH,
       } = {},
     ) {
+      const isDateObject = typeof value === 'object';
       // 1. Normalization
       config = this.normalizeConfig(config);
       let normalizedValue = this.normalizeValue(
@@ -622,11 +623,21 @@ export default {
 
       // Assign value
       if (valueChanged) {
-        this[valueKey] = normalizedValue;
+        let date = normalizedValue;
+        if (!isDateObject && this.buddhistEra) {
+          const buddhistYear = normalizedValue
+            ? normalizedValue.getFullYear()
+            : 0;
+          const year = buddhistYear >= 543 ? buddhistYear - 543 : 0;
+          date = normalizedValue
+            ? new Date(normalizedValue.setYear(year))
+            : new Date(1970, 0, 1);
+        }
+        this[valueKey] = date;
         // Clear drag value if needed
         if (!isDragging) this.dragValue = null;
         // Denormalization
-        const denormalizedValue = this.denormalizeValue(normalizedValue);
+        const denormalizedValue = this.denormalizeValue(date);
         // Notification
         const event = this.isDragging ? 'drag' : 'update:modelValue';
         this.watchValue = false;
@@ -731,10 +742,26 @@ export default {
           this.dragValue || this.value_,
           config,
         );
+
+        let inputValue = value;
+
+        const normalizedValue = this.normalizeValue(
+          this.modelValue,
+          this.modelConfig_,
+          PATCH.DATE_TIME,
+          RANGE_PRIORITY.BOTH,
+        );
+
+        if (this.buddhistEra && normalizedValue && value) {
+          const year = normalizedValue.getFullYear() || 0;
+          const buddhistEraYear = year + 543;
+          inputValue = value.replace(year, buddhistEraYear);
+        }
+
         if (this.isRange) {
           this.inputValues = [value && value.start, value && value.end];
         } else {
-          this.inputValues = [value, ''];
+          this.inputValues = [inputValue, ''];
         }
       });
     },
