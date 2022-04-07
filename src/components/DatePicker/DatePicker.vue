@@ -88,6 +88,7 @@ export default {
                 is24hr: this.is24hr,
                 showBorder: !this.isTime,
                 isDisabled: (this.isDateTime && !dp.isValid) || this.isDragging,
+                buddhistEra: this.buddhistEra,
                 hourOptions,
                 minuteOptions,
                 'onUpdate:modelValue': p => this.onTimeInput(p, idx === 0),
@@ -109,6 +110,7 @@ export default {
           minDate: this.minDateExact || this.minDate,
           maxDate: this.maxDateExact || this.maxDate,
           disabledDates: this.disabledDates,
+          buddhistEra: this.buddhistEra,
           availableDates: this.availableDates,
           onDayclick: this.onDayClick,
           onDaykeydown: this.onDayKeydown,
@@ -185,6 +187,10 @@ export default {
     selectAttribute: Object,
     attributes: Array,
     validHours: [Object, Array, Function],
+    buddhistEra: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {

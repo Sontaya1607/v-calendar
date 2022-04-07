@@ -28,7 +28,7 @@
           {{ locale.format(date, 'D') }}
         </span>
         <span class="vc-time-year">
-          {{ locale.format(date, 'YYYY') }}
+          {{ yearTransform }}
         </span>
       </div>
       <div class="vc-time-select">
@@ -101,6 +101,7 @@ export default {
     showBorder: Boolean,
     hourOptions: Array,
     minuteOptions: Array,
+    buddhistEra: { type: Boolean, default: false },
   },
   computed: {
     date() {
@@ -109,6 +110,13 @@ export default {
         date = new Date(date.getTime() - 1);
       }
       return date;
+    },
+    yearTransform() {
+      let year = this.locale.format(this.date, 'YYYY');
+      if (this.buddhistEra && typeof year === 'string') {
+        year = (parseInt(year) + 543).toString();
+      }
+      return year;
     },
     hours: {
       get() {
